@@ -1,0 +1,8 @@
+.DS_Store
+env.sh
+.env
+swagger.yml
+*.zip
+.terraform
+*.tfstate*
+node_modules/

@@ -1,0 +1,199 @@
+swagger: "2.0"
+info:
+  description: "Used to manage events, masseuses, and customers."
+  version: "1.0.0"
+  title: "The Rub Hub API"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "contactus@salte.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "rubhub.salte.io"
+basePath: "/v1"
+tags:
+- name: "rubhub"
+  description: "Pertains to the rubhub project."
+- name: "poc"
+  description: "This is a proof of concept."
+schemes:
+- "https"
+- "http"
+paths:
+  /event:
+    post:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Event to Be Added"
+        required: true
+        schema:
+          $ref: "#/definitions/Event"
+      responses:
+        201:
+          description: "Event Successfully Added"
+          schema:
+            $ref: "#/definitions/Event"
+      x-amazon-apigateway-integration:
+        uri: "LAMBDA_ARN"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        type: "aws_proxy"
+  /event/{eventId}:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "eventId"
+        in: "path"
+        description: "ID of the Event to Return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Event Successfully Retrieved"
+          schema:
+            $ref: "#/definitions/Event"
+        400:
+          description: "Invalid ID"
+        404:
+          description: "Event Not Found"
+      x-amazon-apigateway-integration:
+        uri: "LAMBDA_ARN"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "GET"
+        type: "aws_proxy"
+    put:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "eventId"
+        in: "path"
+        description: "ID of the Event to Update"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Event to Be Updated"
+        required: true
+        schema:
+          $ref: "#/definitions/Event"
+      responses:
+        201:
+          description: "Event Successfully Updated"
+          schema:
+            $ref: "#/definitions/Event"
+      x-amazon-apigateway-integration:
+        uri: "LAMBDA_ARN"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "PUT"
+        type: "aws_proxy"
+    delete:
+      parameters:
+      - name: "eventId"
+        in: "path"
+        description: "ID of the Event to Delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        204:
+          description: "Successfully Deleted"
+        400:
+          description: "Invalid ID"
+        404:
+          description: "Event Not Found"
+      x-amazon-apigateway-integration:
+        uri: "LAMBDA_ARN"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "DELETE"
+        type: "aws_proxy"
+  /masseuse:
+    post:
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Masseuse to Be Added"
+        required: true
+        schema:
+          $ref: "#/definitions/Masseuse"
+      responses:
+        201:
+          description: "Masseuse Successfully Added"
+      x-amazon-apigateway-integration:
+        uri: "LAMBDA_ARN"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        type: "aws_proxy"
+  /masseuse/{phone}:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "phone"
+        in: "path"
+        description: "Phone Number of the Masseuse to Return"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Masseuse Successfully Retrieved"
+          schema:
+            $ref: "#/definitions/Masseuse"
+        400:
+          description: "Invalid Phone Number"
+        404:
+          description: "Phone Number Not Found"
+      x-amazon-apigateway-integration:
+        uri: "LAMBDA_ARN"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        type: "aws_proxy"
+definitions:
+  Masseuse:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      phone:
+        type: "string"
+      gender:
+        type: "string"
+        enum:
+        - "male"
+        - "female"
+  Event:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      event_date:
+        type: "string"
+      event_time:
+        type: "string"
+      coordinator_name:
+        type: "string"
+      coordinator_phone:
+        type: "string"
+      location_name:
+        type: "string"
+      location:street:
+         type: "string"
+      location_city:
+        type: "string"
+      location_state:
+        type: "string"
+      location_zip:
+          type: "string"
